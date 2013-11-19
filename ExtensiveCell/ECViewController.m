@@ -8,10 +8,9 @@
 
 #import "ECViewController.h"
 #import "ExtensiveCellContainer.h"
+#import "UITableView+Extensions.h"
 
-@interface ECViewController () <UITableViewDataSource, ExtensiveCellDelegate>
-
-@property (strong, nonatomic) NSIndexPath *selectedRowIndexPath;
+@interface ECViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @end
 
@@ -20,22 +19,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [ExtensiveCellContainer registerNibToTableView:self.tableView];
-    
 }
 
 #pragma mark Selection mecanism
 
-- (void)setSelectedRowIndexPath:(NSIndexPath *)selectedRowIndexPath
+- (BOOL)tableView:(UITableView *)tableView isSelectedIndexPath:(NSIndexPath *)indexPath
 {
-    _selectedRowIndexPath = selectedRowIndexPath;
-}
-
-- (BOOL)isSelectedIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath && self.selectedRowIndexPath)
+    if (indexPath && tableView.selectedRowIndexPath)
     {
-        if (indexPath.row == self.selectedRowIndexPath.row && indexPath.section == self.selectedRowIndexPath.section)
+        if (indexPath.row == tableView.selectedRowIndexPath.row && indexPath.section == tableView.selectedRowIndexPath.section)
         {
             return YES;
         }
@@ -43,136 +35,127 @@
     return NO;
 }
 
-- (BOOL)isExtendedCellIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView isExtendedCellIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath && self.selectedRowIndexPath)
+    if (indexPath && tableView.selectedRowIndexPath)
     {
-        if (indexPath.row == self.selectedRowIndexPath.row+1 && indexPath.section == self.selectedRowIndexPath.section)
+        if (indexPath.row == tableView.selectedRowIndexPath.row + 1 && indexPath.section == tableView.selectedRowIndexPath.section)
         {
             return YES;
         }
     }
     return NO;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    
+    if (![self tableView:tableView isExtendedCellIndexPath:indexPath]) {
+     
+        [self tableView:tableView shouldExtendCellAtIndexPath:indexPath];
+    }
 }
 
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (self.selectedRowIndexPath && self.selectedRowIndexPath.section == section)
+    if (tableView.selectedRowIndexPath && tableView.selectedRowIndexPath.section == section)
     {
-        return [self numberOfRowsInSection:section] + 1;
+        return [self tableView:tableView numberOfRowsForSection:section] + 1;
     }
-    return [self numberOfRowsInSection:section];
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return [self numberOfSections];
+    return [self tableView:tableView numberOfRowsForSection:section];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIView *contentView = [self viewForContainerAtIndexPath:indexPath];
-    if ([self isExtendedCellIndexPath:indexPath] && contentView) {
+    UIView *contentView = [self tableView:tableView viewForContainerAtIndexPath:indexPath];
+    if ([self tableView:tableView isExtendedCellIndexPath:indexPath] && contentView) {
         return 2*contentView.frame.origin.y + contentView.frame.size.height;
     } else {
-        return [self heightForExtensiveCellAtIndexPath:indexPath];
+        return [self tableView:tableView heightForExtensiveCellAtIndexPath:indexPath];
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    if ([self isExtendedCellIndexPath:indexPath])
+    if ([self tableView:tableView isExtendedCellIndexPath:indexPath])
     {
         NSString *identifier = [ExtensiveCellContainer reusableIdentifier];
         ExtensiveCellContainer *cell = [tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
-        [cell addContentView:[self viewForContainerAtIndexPath:indexPath]];
+        [cell addContentView:[self tableView:tableView viewForContainerAtIndexPath:indexPath]];
+        
         return cell;
+        
     } else {
-        ExtensiveCell *cell = [self extensiveCellForRowIndexPath:indexPath];
-        if ([cell respondsToSelector:@selector(initializeWithTableViewController:)])
-        {
-            [cell initializeWithTableViewController:(UITableViewController *)self];
-        }
+        
+        UITableViewCell *cell = [self tableView:tableView extensiveCellForRowIndexPath:indexPath];
+        
         return cell;
     }
 }
 
 #pragma mark ExtensiveCellDelegate
 
-- (void)shouldExtendCellAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView shouldExtendCellAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath) {
-        [self.tableView beginUpdates];
+        [tableView beginUpdates];
         
-        if (self.selectedRowIndexPath)
+        if (tableView.selectedRowIndexPath)
         {
-            if ([self isSelectedIndexPath:indexPath])
+            if ([self tableView:tableView isSelectedIndexPath:indexPath])
             {
-                NSIndexPath *tempIndexPath = self.selectedRowIndexPath;
-                self.selectedRowIndexPath = nil;
-                [self removeCellBelowIndexPath:tempIndexPath];
+                NSIndexPath *tempIndexPath = tableView.selectedRowIndexPath;
+                tableView.selectedRowIndexPath = nil;
+                [self tableView:tableView removeCellBelowIndexPath:tempIndexPath];
             } else {
-                NSIndexPath *tempIndexPath = self.selectedRowIndexPath;
-                if (indexPath.row > self.selectedRowIndexPath.row) {
+                NSIndexPath *tempIndexPath = tableView.selectedRowIndexPath;
+                if (indexPath.row > tableView.selectedRowIndexPath.row) {
                     indexPath = [NSIndexPath indexPathForRow:(indexPath.row-1) inSection:indexPath.section];
                 }
-                self.selectedRowIndexPath = indexPath;
-                [self removeCellBelowIndexPath:tempIndexPath];
-                [self insertCellBelowIndexPath:indexPath];
+                tableView.selectedRowIndexPath = indexPath;
+                [self tableView:tableView removeCellBelowIndexPath:tempIndexPath];
+                [self tableView:tableView insertCellBelowIndexPath:indexPath];
             }
         } else {
-            self.selectedRowIndexPath = indexPath;
-            [self insertCellBelowIndexPath:indexPath];
+            tableView.selectedRowIndexPath = indexPath;
+            [self tableView:tableView insertCellBelowIndexPath:indexPath];
         }
         
-        [self.tableView endUpdates];
+        [tableView endUpdates];
     }
 }
 
-- (void)insertCellBelowIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView insertCellBelowIndexPath:(NSIndexPath *)indexPath
 {
     indexPath = [NSIndexPath indexPathForRow:(indexPath.row+1) inSection:indexPath.section];
     NSArray *pathsArray = @[indexPath];
-    [self.tableView insertRowsAtIndexPaths:pathsArray withRowAnimation:UITableViewRowAnimationTop];
+    [tableView insertRowsAtIndexPaths:pathsArray withRowAnimation:UITableViewRowAnimationTop];
 }
 
-- (void)removeCellBelowIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView removeCellBelowIndexPath:(NSIndexPath *)indexPath
 {
     indexPath = [NSIndexPath indexPathForRow:(indexPath.row+1) inSection:indexPath.section];
     NSArray *pathsArray = @[indexPath];
-    [self.tableView deleteRowsAtIndexPaths:pathsArray withRowAnimation:UITableViewRowAnimationTop];
+    [tableView deleteRowsAtIndexPaths:pathsArray withRowAnimation:UITableViewRowAnimationTop];
 }
 
 #pragma mark ECTableViewDataSource default
 
-- (ExtensiveCell *)extensiveCellForRowIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView extensiveCellForRowIndexPath:(NSIndexPath *)indexPath
 {
     return nil;
 }
 
-- (CGFloat)heightForExtensiveCellAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForExtensiveCellAtIndexPath:(NSIndexPath *)indexPath
 {
     return MAIN_CELLS_HEIGHT;
 }
 
-- (NSInteger)numberOfSections
-{
-    return 0;
-}
-
-- (NSInteger)numberOfRowsInSection:(NSInteger)section
-{
-    return 0;
-}
-
-- (UIView *)viewForContainerAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)tableView:(UITableView *)tableView viewForContainerAtIndexPath:(NSIndexPath *)indexPath
 {
     return nil;
 }
-
-
 
 @end

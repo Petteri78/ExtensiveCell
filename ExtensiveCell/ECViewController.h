@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ExtensiveCell.h"
 
 #define MAIN_CELLS_HEIGHT 44
 
@@ -25,7 +24,7 @@
  ECViewController manages the indexPath when you open/close a row. ECViewController will call viewForContainerAtIndexPath: to get the container view.
  
  *****/
-- (ExtensiveCell *)extensiveCellForRowIndexPath:(NSIndexPath *)indexPath;
+- (UITableViewCell *)tableView:(UITableView *)tableView extensiveCellForRowIndexPath:(NSIndexPath *)indexPath;
 
 
 
@@ -37,7 +36,7 @@
  The ECViewcontroller tableview only has one container and reuses it.
  
  *****/
-- (UIView *)viewForContainerAtIndexPath:(NSIndexPath *)indexPath;
+- (UIView *)tableView:(UITableView *)tableView viewForContainerAtIndexPath:(NSIndexPath *)indexPath;
 
 @optional
 
@@ -51,16 +50,7 @@
  ECViewController manages the indexPath when you open/close a row. ECViewController will size the container to fit its given view.
  
  *****/
-- (CGFloat)heightForExtensiveCellAtIndexPath:(NSIndexPath *)indexPath;
-
-
-/*****
- 
- Similar to numberOfSectionsInTableView: frm UITableViewDataSource.
- 
- *****/
-- (NSInteger)numberOfSections;
-
+- (CGFloat)tableView:(UITableView *)tableView heightForExtensiveCellAtIndexPath:(NSIndexPath *)indexPath;
 
 /*****
  
@@ -69,16 +59,12 @@
  Do not consider the container (open or closed) when calculating the number of rows.
  
  *****/
-- (NSInteger)numberOfRowsInSection:(NSInteger)section;
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsForSection:(NSInteger)section;
 
 @end
 
 @interface ECViewController : UIViewController <ECTableViewDataSource>
-
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-
-
-
 
 @end
 

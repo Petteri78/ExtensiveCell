@@ -10,4 +10,6 @@
 
 @interface DemoViewController : ECViewController
 
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+
 @end

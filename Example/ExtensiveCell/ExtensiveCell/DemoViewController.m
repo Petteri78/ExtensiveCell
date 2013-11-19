@@ -8,6 +8,7 @@
 
 #import "DemoViewController.h"
 #import <MapKit/MapKit.h>
+#import "ExtensiveCellContainer.h"
 
 @interface DemoViewController ()
 
@@ -21,6 +22,11 @@
 {
     if (!_mapView) _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 128)];
     return _mapView;
+}
+
+- (void) viewDidLoad{
+    
+    [ExtensiveCellContainer registerNibToTableView:self.tableView];
 }
 
 #pragma mark ECTableViewDataSource
@@ -38,15 +44,13 @@
  
 *****/
 
-- (ExtensiveCell *)extensiveCellForRowIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView extensiveCellForRowIndexPath:(NSIndexPath *)indexPath
 {
     NSString *identifier = @"demoCell";
-    ExtensiveCell *cell = [self.tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
+    UITableViewCell *cell = [self.tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
     
     return cell;
 }
-
-
 
 /*****
  
@@ -59,7 +63,7 @@
  
 *****/
 
-- (CGFloat)heightForExtensiveCellAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForExtensiveCellAtIndexPath:(NSIndexPath *)indexPath;
 {
     return 44;
 }
@@ -70,8 +74,8 @@
  
 *****/
 
-- (NSInteger)numberOfSections
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    // Return the number of sections.
     return 2;
 }
 /*****
@@ -82,7 +86,7 @@
  
 *****/
 
-- (NSInteger)numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsForSection:(NSInteger)section
 {
     return 5;
 }
@@ -96,7 +100,7 @@
  
 *****/
 
-- (UIView *)viewForContainerAtIndexPath:(NSIndexPath *)indexPath
+- (UIView *)tableView:(UITableView *)tableView viewForContainerAtIndexPath:(NSIndexPath *)indexPath
 {
     switch (indexPath.row) {
         case 1:

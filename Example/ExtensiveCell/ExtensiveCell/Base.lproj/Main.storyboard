@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Demo View Controller-->
@@ -22,7 +22,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="demoCell" textLabel="7cJ-KK-l3L" style="IBUITableViewCellStyleDefault" id="bM9-tn-bbQ" customClass="ExtensiveCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="demoCell" textLabel="7cJ-KK-l3L" style="IBUITableViewCellStyleDefault" id="bM9-tn-bbQ">
                                         <rect key="frame" x="0.0" y="55" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bM9-tn-bbQ" id="YCp-lz-Nck">
@@ -42,8 +42,8 @@
                                 </prototypes>
                                 <sections/>
                                 <connections>
-                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="Ulb-aU-BMi"/>
-                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="gLf-gO-aEB"/>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="8Qc-aF-ZZh"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="hIt-rZ-JlI"/>
                                 </connections>
                             </tableView>
                         </subviews>
@@ -56,7 +56,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="tableView" destination="W0q-nS-MUd" id="oVQ-0c-4A7"/>
+                        <outlet property="tableView" destination="W0q-nS-MUd" id="iql-ln-7w9"/>
+                        <outlet property="view" destination="kh9-bI-dsS" id="oc7-70-DDm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
